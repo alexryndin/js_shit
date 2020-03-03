@@ -12,6 +12,9 @@ var db = [
     "fillCircle",
     "fillCircleMore"
 ];
+
+const KEY_ENTER = 13;
+
 let d = new Date();
 // alert("Today's date is " + d);
 //
@@ -59,7 +62,7 @@ const autoCompletejs = new autoComplete({
     data: {                              // Data src [Array, Function, Async] | (REQUIRED)
         src: async () => {
             // User search query
-            const query = document.querySelector("#autoComplete").value;
+            const query = $("#autoComplete").value;
             // Fetch External Data Source
             // const source = await fetch(`http://localhost:8080/${query}`);
             let data = await query_resources(query);
@@ -169,7 +172,49 @@ function set_user_info() {
 
 }
 
+function register_listeners() {
+    $("#autoComplete").keypress(function(event) { 
+        if (event.keyCode === KEY_ENTER) { 
+            do_enter_action() ;
+        } 
+    });
+}
+
+function do_enter_action() {
+    const result = document.createElement("li");
+    result.setAttribute("class", "no_result");
+    result.setAttribute("tabindex", "1");
+    result.innerHTML = "Not found! (but still can be requested :-))";
+    $("#autoComplete_list").appendChild(result);
+
+}
+
 function main() {
+
+    let rrs = [];
+    let rrs_hooks = {
+        set: function(target, property, value, receiver) {
+            console.log('setting ' + property + ' for ' + target + ' with value ' + value);
+            const result = document.createElement("li");
+            result.innerHTML = value;
+            $("#selection").appendChild(result);
+            // Actually set
+            target[property] = value;
+            console.log(rrs.length)
+            // you have to return true to accept the changes
+            return true;
+        }
+    };
+    rrs = new Proxy(rrs, rrs_hooks);
+    console.log(rrs.length)
+    $("#autoComplete").addEventListener("keypress", function(event) { 
+        if (event.keyCode === KEY_ENTER) { 
+            let r_text = $("#autoComplete").value;
+            $("#autoComplete").setAttribute("placeholder", r_text);
+            rrs.push(r_text);
+        } 
+    });
+//    register_listeners();
     visual_log('initialised...');
     set_user_info();
 
