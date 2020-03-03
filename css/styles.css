@@ -1,0 +1,161 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #123456;
+}
+
+html, button, input, select, textarea,
+.pure-g [class *= "pure-u"] {
+    font-family: Helvetica, Arial, sans-serif;
+    letter-spacing: 0.01em;
+}
+
+#console,
+#console * {
+    font-family: monospace;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+
+/* --------------------------
+ * Element Styles
+ * --------------------------
+*/
+
+body {
+    min-width: 320px;
+    background-color: #fff;
+//    color: #777;
+    line-height: 1.6;
+}
+
+h1 {
+}
+
+.l-box {
+    padding: 1em;
+}
+
+#console {
+    background-color: black;
+    color: #777;
+}
+
+#autoComplete_list {
+  z-index: 1000;
+  padding: 0;
+  left: 0;
+  right: 0;
+  margin-top: 0;
+  margin-left: auto;
+  margin-right: auto;
+}
+#autoComplete_wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+#autoComplete {
+  font-size: 1.2rem;
+  outline: none;
+}
+
+#autoComplete:focus::placeholder {
+  font-size: 1rem;
+}
+
+#autoComplete::selection {
+  color: transparent;
+}
+
+#autoComplete:focus::selection {
+  color: #fff;
+}
+
+#autoComplete:hover {
+  height: 3rem;
+}
+
+#autoComplete:focus {
+  height: 3rem;
+  border: 0.05rem solid rgb(122, 122, 255);
+  box-shadow: rgba(122, 122, 255, 0.1) 0px 0px 20px 5px;
+}
+
+.autoComplete_result {
+  padding: 0.6rem;
+  border: 0.05rem solid #e3e3e3;
+  list-style: none;
+  text-align: left;
+  font-size: 1.1rem;
+  color: rgb(123, 123, 123);
+  background-color: #fff;
+}
+
+.autoComplete_result::selection {
+  color: rgba(#ffffff, 0);
+  background-color: rgba(#ffffff, 0);
+}
+
+.autoComplete_result:last-child {
+  border-radius: 0 0 1rem 1rem;
+}
+
+.autoComplete_result:hover {
+  cursor: pointer;
+  background-color: rgba(255, 248, 248, 0.9);
+  border-right: 2px solid rgba(122, 122, 255, 1);
+  border-top: 2px solid transparent;
+  border-bottom: 2px solid transparent;
+}
+
+.autoComplete_result:focus {
+  border-right: 2px solid rgba(122, 122, 255, 1);
+  border-top: 2px solid transparent;
+  border-bottom: 2px solid transparent;
+}
+
+.autoComplete_highlighted {
+  opacity: 1;
+  color: rgba(122, 122, 255, 1);
+  font-weight: bold;
+}
+
+.autoComplete_highlighted::selection {
+  color: rgba(#ffffff, 0);
+  background-color: rgba(#ffffff, 0);
+}
+
+.autoComplete_selected {
+  cursor: pointer;
+  background-color: rgba(248, 248, 255, 0.9);
+  border-right: 2px solid rgba(122, 122, 255, 1);
+  border-top: 2px solid transparent;
+  border-bottom: 2px solid transparent;
+}
+
+.no_result {
+  padding: 0.6rem;
+  border: 0.05rem solid #e3e3e3;
+  list-style: none;
+  text-align: left;
+  font-size: 1.1rem;
+  color: rgb(123, 123, 123);
+  border-radius: 0 0 1rem 1rem;
+}
+
+.no_result:hover {
+  cursor: default;
+  background-color: #fff;
+  border: 0.05rem solid #e3e3e3;
+}
+
+.no_result:focus {
+  cursor: default;
+  background-color: #fff;
+  border: 0.05rem solid #e3e3e3;
+}
+
