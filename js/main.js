@@ -111,6 +111,7 @@ const autoCompletejs = new autoComplete({
         document.querySelector("#autoComplete_list").appendChild(result);
     },
     onSelection: feedback => {             // Action script onSelection event | (Optional)
+//        document.querySelector("#autoComplete").blur();
         const selection = feedback.selection.value;
         document.querySelector("#autoComplete").value = selection;
         // Change placeholder with the selected value
@@ -173,11 +174,20 @@ function set_user_info() {
 }
 
 function register_listeners() {
-    $("#autoComplete").keypress(function(event) { 
-        if (event.keyCode === KEY_ENTER) { 
-            do_enter_action() ;
-        } 
+
+    // Hide results list on focus loose
+    ["focus", "blur"].forEach(function(eventType) {
+        const resultsList = document.querySelector("#autoComplete_list");
+        $("#autoComplete").addEventListener(eventType, function() {
+            if (eventType === "blur") {
+                resultsList.style.display = "none";
+            } else if (eventType === "focus") {
+                // Show results list & hide other elemennts
+                resultsList.style.display = "block";
+            }
+        });
     });
+
 }
 
 function do_enter_action() {
@@ -189,32 +199,45 @@ function do_enter_action() {
 
 }
 
+class RR {
+    constructor() {
+        this.rrs = [];
+    }
+
+    push(v) {
+        const result = document.createElement("li");
+        result.innerHTML = v;
+        $("#selection").appendChild(result);
+        return this.rrs.push(v);
+    }
+
+    del(i) {
+        return this.rss.splice(i, 1);
+    }
+
+
+}
+
 function main() {
 
-    let rrs = [];
-    let rrs_hooks = {
-        set: function(target, property, value, receiver) {
-            console.log('setting ' + property + ' for ' + target + ' with value ' + value);
-            const result = document.createElement("li");
-            result.innerHTML = value;
-            $("#selection").appendChild(result);
-            // Actually set
-            target[property] = value;
-            console.log(rrs.length)
-            // you have to return true to accept the changes
-            return true;
-        }
-    };
-    rrs = new Proxy(rrs, rrs_hooks);
-    console.log(rrs.length)
+    let rr = new RR();
+
     $("#autoComplete").addEventListener("keypress", function(event) { 
         if (event.keyCode === KEY_ENTER) { 
+            let list = $("#autoComplete_list");
+            console.log(list.children.length);
+            console.log(list);
+            if (list && (list.style.display != "none" && list.children.length !== 0)) {
+                console.log(list.children.length);
+                console.log("returned");
+                return
+            }
             let r_text = $("#autoComplete").value;
             $("#autoComplete").setAttribute("placeholder", r_text);
-            rrs.push(r_text);
+            rr.push(r_text);
         } 
     });
-//    register_listeners();
+    register_listeners();
     visual_log('initialised...');
     set_user_info();
 

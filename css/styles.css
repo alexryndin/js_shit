@@ -76,11 +76,13 @@ h1 {
 }
 
 #autoComplete:hover {
-  height: 3rem;
+}
+
+#autoComplete_button {
+  font-size: 1.2rem;
 }
 
 #autoComplete:focus {
-  height: 3rem;
   border: 0.05rem solid rgb(122, 122, 255);
   box-shadow: rgba(122, 122, 255, 0.1) 0px 0px 20px 5px;
 }
