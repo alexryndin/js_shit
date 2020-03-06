@@ -207,12 +207,16 @@ class RR {
     push(v) {
         const result = document.createElement("li");
         result.innerHTML = v;
+        const x_button = document.createElement("div");
+        x_button.setAttribute("class", "deleteMe");
+        x_button.innerHTML = "[X]";
+        result.appendChild(x_button);
         $("#selection").appendChild(result);
         return this.rrs.push(v);
     }
 
     del(i) {
-        return this.rss.splice(i, 1);
+        return this.rrs.splice(i, 1);
     }
 
 

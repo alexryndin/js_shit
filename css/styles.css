@@ -19,6 +19,10 @@ html, button, input, select, textarea,
     margin-bottom: 0;
 }
 
+.deleteMe {
+    float: right;
+}
+
 
 /* --------------------------
  * Element Styles
