@@ -67,7 +67,7 @@ const autoCompletejs = new autoComplete({
             // const source = await fetch(`http://localhost:8080/${query}`);
             let data = await query_resources(query);
             data = data.slice(0,300);
-             
+
             // Format data into JSON
             //console.log(data);
             console.log(data);
@@ -124,10 +124,10 @@ const autoCompletejs = new autoComplete({
 
 
 function visual_log(message) {
-    let node = document.createElement("p");             
+    let node = document.createElement("p");
     let msg = document.createTextNode("> ".concat(message));
     node.appendChild(msg);
-    document.querySelector("#console").appendChild(node); 
+    document.querySelector("#console").appendChild(node);
 }
 
 function set_user_groups(username, groups) {
@@ -204,19 +204,47 @@ class RR {
         this.rrs = [];
     }
 
-    push(v) {
+    render_li(id) {
         const result = document.createElement("li");
-        result.innerHTML = v;
+        result.innerHTML = this.rrs[id];
+
         const x_button = document.createElement("div");
-        x_button.setAttribute("class", "deleteMe");
         x_button.innerHTML = "[X]";
+        x_button.setAttribute("class", "deleteMe");
+        x_button.setAttribute("id", id);
+
+        let f = function(event) {
+            console.log(event.target);
+            let id_todel = event.target.getAttribute("id");
+            console.log(id_todel);
+            this.del(id_todel);
+        };
+        f = f.bind(this);
+        x_button.addEventListener("click", f);
+
         result.appendChild(x_button);
+
         $("#selection").appendChild(result);
-        return this.rrs.push(v);
+    }
+
+    push(v) {
+        let ret = this.rrs.push(v);
+        this.render_li(this.rrs.length-1);
+        return ret;
+    }
+
+    render() {
+        let selection = $("#selection");
+        selection.innerHTML = "";
+        for (let i=0; i<this.rrs.length; i++) {
+            this.render_li(i)
+        }
     }
 
     del(i) {
-        return this.rrs.splice(i, 1);
+        let ret = this.rrs.splice(i, 1);
+        this.render();
+        return ret;
     }
 
 
@@ -226,8 +254,8 @@ function main() {
 
     let rr = new RR();
 
-    $("#autoComplete").addEventListener("keypress", function(event) { 
-        if (event.keyCode === KEY_ENTER) { 
+    $("#autoComplete").addEventListener("keypress", function(event) {
+        if (event.keyCode === KEY_ENTER) {
             let list = $("#autoComplete_list");
             console.log(list.children.length);
             console.log(list);
