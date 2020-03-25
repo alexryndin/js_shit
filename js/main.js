@@ -58,6 +58,79 @@ async function query_resources(raw_path) {
     return ret;
 }
 
+function customNavigationWrapper (event, input, resListElement, onSelection, resListData) {
+    //console.log("event = ", event);
+    return customNavigation(input, resListElement, onSelection, resListData);
+
+}
+
+const customNavigation = (input, resultsList, feedback, resultsValues) => {
+    // Locals
+    const li = resultsList.childNodes,
+        liLength = li.length - 1;
+    let liSelected = undefined,
+        next;
+    // Remove selection class
+    const removeSelection = direction => {
+        liSelected.classList.remove(select.selectedResult);
+        if (direction === 1) {
+            next = liSelected.nextSibling;
+        } else {
+            next = liSelected.previousSibling;
+        }
+    };
+    // Add selection class
+    const highlightSelection = current => {
+        liSelected = current;
+        liSelected.classList.add(select.selectedResult);
+    };
+    // Keyboard action
+    input.onkeydown = event => {
+        if (li.length > 0) {
+            switch (event.keyCode) {
+                // Arrow Up
+                case keys.ARROW_UP:
+                    if (liSelected) {
+                        removeSelection(0);
+                        if (next) {
+                            highlightSelection(next);
+                        } else {
+                            highlightSelection(li[liLength]);
+                        }
+                        $("#autoComplete").value = liSelected.innerText;
+                    } else {
+                        highlightSelection(li[liLength]);
+                        $("#autoComplete").value = li[liLength].innerText;
+                    }
+                    break;
+                // Arrow Down
+                case keys.ARROW_DOWN:
+                    if (liSelected) {
+                        removeSelection(1);
+                        if (next) {
+                            highlightSelection(next);
+                        } else {
+                            highlightSelection(li[0]);
+                        }
+                        $("#autoComplete").value = liSelected.innerText;
+                    } else {
+                        highlightSelection(li[0]);
+                        $("#autoComplete").value = li[0].innerText;
+                    }
+                    break;
+                case keys.ENTER:
+                    if (liSelected) {
+                        onSelection(event, input, resultsList, feedback, resultsValues, liSelected);
+                    }
+            }
+        }
+    };
+    // Mouse action
+    li.forEach(selection => {
+        selection.onmousedown = event => onSelection(event, input, resultsList, feedback, resultsValues);
+    });
+};
+
 const autoCompletejs = new autoComplete({
     data: {                              // Data src [Array, Function, Async] | (REQUIRED)
         src: async () => {
@@ -94,6 +167,7 @@ const autoCompletejs = new autoComplete({
 //        destination: document.querySelector("#rb_resource_list"),
 //        position: "afterend",
 //        element: "ul"
+        navigation: customNavigationWrapper,
     },
     maxResults: 5,                         // Max. number of rendered results | (Optional)
 //    highlight: true,                       // Highlight matching results      | (Optional)
@@ -200,8 +274,48 @@ function do_enter_action() {
 }
 
 class RR {
-    constructor() {
+    constructor(user) {
         this.rrs = [];
+        this.user = user;
+        let rb = $("#request_button");
+        this.rb = rb;
+        this.error_infoblock = $("#error_infoblock");
+        this.info_infoblock = $("#info_infoblock");
+        let f = function(event) {
+            console.log("request button pressed");
+            let ret = this.make_rr();
+            console.log("make_rr return value -> ", ret);
+        }.bind(this)
+        rb.addEventListener("click", f);
+    }
+
+    make_rr() {
+        this.rb.disabled = true;
+        const url = new URL(BASEURL.concat('/newrr'));
+        const myHeaders = new Headers({
+            'Accept-Languag': 'ProcessThisImmediately'
+        });
+        const body = JSON.stringify({
+            paths: this.rrs,
+            user: this.user,
+        });
+        const params = {
+            body: body,
+            method: "POST",
+            credentials: 'include',
+            headers: myHeaders,
+        };
+        const myRequest = new Request(BASEURL.concat('/newrr'), params);
+        fetch(myRequest)
+            .then(data=>data.json()
+                .then(data => {
+                    if ("error" in data) {
+                        this.error_infoblock.innerHTML = data["error"];
+                    } else {
+                        this.info_infoblock.innerHTML = JSON.stringify(data);
+                    }
+                })
+            );
     }
 
     render_li(id) {
@@ -247,8 +361,8 @@ class RR {
         return ret;
     }
 
-
 }
+
 
 function main() {
 

@@ -29,12 +29,14 @@
     <div class="pure-g l-box">
       <div class="pure-u-1-1">
         <h2 align="center">The form</h2>
+        <div id="error_infoblock"></div>
+        <div id="info_infoblock"></div>
         <div class="pure-form pure-g">
           <div class="pure-u-7-8 pure-form">
             <input type="text" name="name" id="autoComplete" class="pure-input-1" tabindex="1" autocomplete="off">
           </div>
           <div class="pure-u-1-8 pure-form">
-            <button class="pure-button pure-input-1 pure-button-primary" id="autoComplete_button">GO!</button>
+            <button class="pure-button pure-input-1 pure-button-primary" id="request_button">GO!</button>
           </div>
     <!--
           <ul id="rb_resource_list"></ul>
@@ -52,9 +54,10 @@
       </div>
     </div>
     <!--
-    -->
     <script src="https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@7.2.0/dist/js/autoComplete.js"></script>
+    -->
+    <script src="js/autoComplete_local.js"></script>
     <script src="js/helpers.js"></script>
-    <script src="main.js"></script>
+    <script src="js/main.js"></script>
   </body>
 </html>
