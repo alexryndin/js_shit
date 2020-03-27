@@ -12,6 +12,10 @@ html, button, input, select, textarea,
     letter-spacing: 0.01em;
 }
 
+table {
+    margin-bottom: 1em;
+}
+
 #console,
 #console * {
     font-family: monospace;
@@ -21,6 +25,51 @@ html, button, input, select, textarea,
 
 .deleteMe {
     float: right;
+}
+
+/* ------------------------------
+ * Bar for messages
+ * https://code-boxx.com/simple-css-error-messages/
+ * ------------------------------
+*/
+.bar {
+    padding: 10px;
+    margin: 10px;
+    margin-left: 0;
+    margin-right: 0;
+    color: #333;
+    background: #fafafa;
+    border: 1px solid #ccc;
+}
+.info {
+    color: #204a8e;
+    background: #c9ddff;
+    border: 1px solid #4c699b;
+}
+.success {
+    color: #2b7515;
+    background: #ecffd6;
+    border: 1px solid #617c42;
+}
+.warn {
+    color: #756e15;
+    background: #fffbd1;
+    border: 1px solid #87803e;
+}
+.error {
+    color: #ba3939;
+    background: #ffe0e0;
+    border: 1px solid #a33a3a;
+}
+
+/* ------------------------------
+ * My styles
+ * ------------------------------
+*/
+
+.current_row {
+ //   color: #fff;
+    background-color:#e2f2e2
 }
 
 
@@ -62,6 +111,7 @@ h1 {
   display: inline-block;
 }
 
+.autoComplete,
 #autoComplete {
   font-size: 1.2rem;
   outline: none;
@@ -82,10 +132,15 @@ h1 {
 #autoComplete:hover {
 }
 
-#request_button {
+.autoComplete {
   font-size: 1.2rem;
 }
 
+.autoCompleteButton.pure-button {
+  font-size: 1.2rem;
+}
+
+.autoComplete:focus,
 #autoComplete:focus {
   border: 0.05rem solid rgb(122, 122, 255);
   box-shadow: rgba(122, 122, 255, 0.1) 0px 0px 20px 5px;

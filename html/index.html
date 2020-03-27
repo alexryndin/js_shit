@@ -1,63 +1,108 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Lis</title>
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.1/build/pure-min.css" integrity="sha384-oAOxQR6DkCoMliIh8yFnu25d7Eq/PHS21PClpwjOTeU2jRSq11vu66rf90/cZr47" crossorigin="anonymous">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Lis</title>
+        <link rel="stylesheet" href="css/styles.css">
+        <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.1/build/pure-min.css" integrity="sha384-oAOxQR6DkCoMliIh8yFnu25d7Eq/PHS21PClpwjOTeU2jRSq11vu66rf90/cZr47" crossorigin="anonymous">
 
 
-  </head>
-  <body>
-    <div class="pure-g l-box">
-      <div class="pure-u-1-2">
-        <h1>Hello world</h1>
-      </div>
-    </div>
-    <div class="pure-g l-box">
-      <div class="pure-u-1-2">
-        <div id="info">
+    </head>
+    <body>
+        <div class="pure-g l-box">
+            <div class="pure-u-1">
+                <h1 align="center">Hello world</h1>
+            </div>
         </div>
-      </div>
-      <div class="pure-u-1-2">
-        <p>
-          Hello
-        </p>
-      </div>
-    </div>
-    <div class="pure-g l-box">
-      <div class="pure-u-1-1">
-        <h2 align="center">The form</h2>
-        <div id="error_infoblock"></div>
-        <div id="info_infoblock"></div>
-        <div class="pure-form pure-g">
-          <div class="pure-u-7-8 pure-form">
-            <input type="text" name="name" id="autoComplete" class="pure-input-1" tabindex="1" autocomplete="off">
-          </div>
-          <div class="pure-u-1-8 pure-form">
-            <button class="pure-button pure-input-1 pure-button-primary" id="request_button">GO!</button>
-          </div>
-    <!--
-          <ul id="rb_resource_list"></ul>
-    -->
-        </div >
-
-        <ul id="selection">
-        </ul>
-      </div>
-    </div>
-    <div class="pure-g l-box">
-      <div class="pure-u-1-1">
-        <div id="console">
+        <div class="pure-g l-box">
+            <div class="pure-u-1-2">
+                <div id="info">
+                </div>
+            </div>
+            <div class="pure-u-1-2">
+                <p>
+                    Hello
+                </p>
+            </div>
         </div>
-      </div>
-    </div>
-    <!--
-    <script src="https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@7.2.0/dist/js/autoComplete.js"></script>
-    -->
-    <script src="js/autoComplete_local.js"></script>
-    <script src="js/helpers.js"></script>
-    <script src="js/main.js"></script>
-  </body>
+        <div class="pure-g l-box">
+            <div class="pure-u-1-1">
+                <h2 align="center">The form</h2>
+                <div id="info_infoblock" class="bar warn">Initialization, wait...</div>
+                <div class="pure-g pure-form">
+                    <div class="pure-u-1">
+                        <legend>Put your task description below</legend>
+                        <textarea class="pure-u-1-1 autoComplete" placeholder="Task description" id="task_description" maxlength="1000"></textarea>
+                    </div>
+                    <div class="pure-u-1-2 pure-form">
+                        <legend>
+                            Explore and select required resources with this field. Select with arrows, then press enter.
+                            <br>
+                            e.g.: /hdfs/rbhp/dwh...
+                        </legend>
+                        <input type="text" name="name" id="autoComplete" class="pure-input-1" tabindex="1" autocomplete="off">
+                    </div>
+                    <div class="pure-u-1-2 pure-form">
+                        <legend>Select user with this field. Select with arrows, then press enter.</legend>
+                        <input type="text" name="name" id="autoComplete_user" class="pure-input-1 autoComplete" tabindex="1" autocomplete="off">
+                    </div>
+                    <div class="pure-u-1-4 pure-form">
+                        <button class="autoCompleteButton pure-button pure-input-1 pure-button-primary autoCompleteButton" id="add_row_button">Add row</button>
+                    </div>
+                    <div class="pure-u-1">
+                        <table width="100%" class="pure-table pure-table-bordered" id="r_table">
+                            <col width="45%">
+                            <col width="45%">
+                            <col width="10%">
+                            <thead>
+                                <tr>
+                                    <th>Resources</th>
+                                    <th>Users</th>
+                                    <th>Del</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+        <!--
+                                <tr class="current_row">
+                                    <td>#</td>
+                                    <td>Make</td>
+                                    <td>[X]</td>
+                                </tr>
+        -->
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+
+        <!--
+                    <ul id="rb_resource_list"></ul>
+        -->
+            </div>
+        <!--
+            <ul id="selection">
+            </ul>
+        -->
+            <div class="pure-u-1-3 pure-form"></div>
+            <div class="pure-u-1-3 pure-form">
+                <button class="pure-button pure-input-1 pure-button-primary" id="request_button">Request!</button>
+            </div>
+            <div class="pure-u-1-3 pure-form"></div>
+        </div>
+            </div>
+        </div>
+        <div class="pure-g l-box">
+            <div class="pure-u-1-1">
+                <div id="console">
+                </div>
+            </div>
+        </div>
+        <!--
+        <script src="https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@7.2.0/dist/js/autoComplete.js"></script>
+        -->
+        <script src="js/autoComplete_local.js"></script>
+        <script src="js/helpers.js"></script>
+        <script src="js/main.js"></script>
+    </body>
 </html>

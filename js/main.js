@@ -146,8 +146,6 @@ const autoCompletejs = new autoComplete({
             console.log(data);
             return data;
         },
-//        src: ['/hdfs/dwh', '/hdfs/backup', '/hdfs/data', '/hdfs/data', '/hdfs/data', '/hdfs/data', '/hdfs/data', '/hdfs/data', '/hdfs/data', '/hdfs/data', '/hdfs/data', '/hdfs/data', '/hdfs/data', '/hdfs/data', '/hdfs/data', '/hdfs/data', '/hdfs/data'],
-//      key: ["title"],
       cache: false
     },
     sort: (a, b) => {                    // Sort rendered results ascendingly | (Optional)
@@ -155,7 +153,70 @@ const autoCompletejs = new autoComplete({
         if (a.match > b.match) return 1;
         return 0;
     },
-    placeHolder: "Resource Path",     // Place Holder text                 | (Optional)
+        placeHolder: "Resource Path, e.g. /hdfs/rbhp/dwh",     // Place Holder text                 | (Optional)
+    threshold: 1,                        // Min. Chars length to start Engine | (Optional)
+    debounce: 300,                       // Post duration for engine to start | (Optional)
+    searchEngine: "strict",              // Search Engine type/mode           | (Optional)
+    resultsList: {                       // Rendered results list object      | (Optional)
+        render: true,
+//        container: source => {
+//            source.setAttribute("id", "food_list");
+//        },
+//        destination: document.querySelector("#rb_resource_list"),
+//        position: "afterend",
+//        element: "ul"
+        navigation: customNavigationWrapper,
+    },
+    maxResults: 5,                         // Max. number of rendered results | (Optional)
+//    highlight: true,                       // Highlight matching results      | (Optional)
+//    resultItem: {                          // Rendered result item            | (Optional)
+//        content: (data, source) => {
+//            source.innerHTML = data.match;
+//        },
+//        element: "li"
+//    },
+    noResults: () => {                     // Action script on noResults      | (Optional)
+        const result = document.createElement("li");
+        result.setAttribute("class", "no_result");
+        result.setAttribute("tabindex", "1");
+        result.innerHTML = "Not found! (but still can be requested :-))";
+        document.querySelector("#autoComplete_list").appendChild(result);
+    },
+    onSelection: feedback => {             // Action script onSelection event | (Optional)
+//        document.querySelector("#autoComplete").blur();
+        const selection = feedback.selection.value;
+        document.querySelector("#autoComplete").value = selection;
+        // Change placeholder with the selected value
+    },
+    trigger: {
+        event: ["input", "focusin", "focusout"]
+    },
+
+});
+
+const autoCompletejsUsers = new autoComplete({
+    data: {                              // Data src [Array, Function, Async] | (REQUIRED)
+        src: async () => {
+            // User search query
+            const query = $("#autoComplete_user").value;
+            // Fetch External Data Source
+            // const source = await fetch(`http://localhost:8080/${query}`);
+            let data = await query_resources(query);
+            data = data.slice(0,300);
+
+            // Format data into JSON
+            //console.log(data);
+            console.log(data);
+            return data;
+        },
+      cache: false
+    },
+    sort: (a, b) => {                    // Sort rendered results ascendingly | (Optional)
+        if (a.match < b.match) return -1;
+        if (a.match > b.match) return 1;
+        return 0;
+    },
+        placeHolder: "Username",     // Place Holder text                 | (Optional)
     threshold: 1,                        // Min. Chars length to start Engine | (Optional)
     debounce: 300,                       // Post duration for engine to start | (Optional)
     searchEngine: "strict",              // Search Engine type/mode           | (Optional)
@@ -261,6 +322,13 @@ function register_listeners() {
             }
         });
     });
+    $("#add_row_button").addEventListener("click", function() {
+        const current_row_id = this.current_row_id;
+        const cr = $("#current_row");
+        cr.setAttribute("id", undefined);
+
+    });
+
 
 }
 
@@ -274,13 +342,14 @@ function do_enter_action() {
 }
 
 class RR {
-    constructor(user) {
+    constructor(prnt) {
+        this.p = prnt;
         this.rrs = [];
-        this.user = user;
         let rb = $("#request_button");
         this.rb = rb;
         this.error_infoblock = $("#error_infoblock");
         this.info_infoblock = $("#info_infoblock");
+        this.description = $("#task_description");
         let f = function(event) {
             console.log("request button pressed");
             let ret = this.make_rr();
@@ -291,31 +360,42 @@ class RR {
 
     make_rr() {
         this.rb.disabled = true;
+        this.info_infoblock.className = "bar info";
+        this.info_infoblock.innerHTML = "Request send, wait...";
         const url = new URL(BASEURL.concat('/newrr'));
         const myHeaders = new Headers({
             'Accept-Languag': 'ProcessThisImmediately'
         });
+        console.log(this.description.value);
         const body = JSON.stringify({
             paths: this.rrs,
             user: this.user,
+            description: this.description.value,
         });
         const params = {
             body: body,
             method: "POST",
             credentials: 'include',
-            headers: myHeaders,
+//            headers: myHeaders,
         };
         const myRequest = new Request(BASEURL.concat('/newrr'), params);
         fetch(myRequest)
             .then(data=>data.json()
                 .then(data => {
                     if ("error" in data) {
-                        this.error_infoblock.innerHTML = data["error"];
+                        this.info_infoblock.innerHTML = data["error"];
+                        this.info_infoblock.className = "bar error";
                     } else {
                         this.info_infoblock.innerHTML = JSON.stringify(data);
+                        this.info_infoblock.className = "bar success";
                     }
                 })
-            );
+            )
+            .catch(err => {
+                this.info_infoblock.className = "bar error";
+                this.info_infoblock.innerHTML = "Something went wrong :(";
+                this.rb.disabled = false;
+            });
     }
 
     render_li(id) {
@@ -338,7 +418,10 @@ class RR {
 
         result.appendChild(x_button);
 
-        $("#selection").appendChild(result);
+        $("#selection")?.appendChild(result);
+
+        return result;
+
     }
 
     push(v) {
@@ -347,26 +430,89 @@ class RR {
         return ret;
     }
 
-    render() {
-        let selection = $("#selection");
-        selection.innerHTML = "";
+    render_ul() {
+        const ul = document.createElement("ul");
         for (let i=0; i<this.rrs.length; i++) {
-            this.render_li(i)
+            ul.appendChild(this.render_li(i));
         }
+        return ul;
     }
 
     del(i) {
         let ret = this.rrs.splice(i, 1);
-        this.render();
+        this.render_ul();
+        this.p.render();
         return ret;
     }
 
 }
 
+//Resource requests table
+class RRT {
+    constructor() {
+        this.current_row_id = 0;
+        this.arb = $("#add_row_button");
+        this.rt = $("#r_table");
+        this.rrs = [];
+        this.rrs.unshift(new RR(this));
+        this.render_row(this.current_row_id);
+        this.make_current(this.current_row_id);
+        this.arb.addEventListener("click", function(event) {
+            this.rrs.unshift(new RR(this));
+            this.render()
+        }.bind(this));
+    }
+
+    render_row(id) {
+        const tr = document.createElement("tr");
+        tr.setAttribute("id", id);
+
+        const td1 = document.createElement("td");
+        td1.appendChild(this.rrs[id].render_ul());
+
+        const td2 = document.createElement("td");
+        const ul2 = document.createElement("ul");
+        td2.appendChild(ul2);
+
+        const td3 = document.createElement("td");
+        const x_button = document.createElement("div");
+        x_button.innerHTML = "[X]";
+        x_button.setAttribute("class", "deleteMe");
+        x_button.setAttribute("id", id);
+        td3.appendChild(x_button);
+
+        tr.append(td1);
+        tr.append(td2);
+        tr.append(td3);
+        this.rt.tBodies[0].append(tr);
+    }
+
+    render() {
+        this.rt.tBodies[0].innerHTML = "";
+        for (let i=0; i<this.rrs.length; i++) {
+            this.render_row(i);
+        }
+        this.make_current(this.current_row_id);
+    }
+
+    push_rr(rr) {
+        let ret = this.rrs[this.current_row_id].push(rr);
+     //   console.log(this.rrs[this.current_row_id]);
+        this.render();
+        return ret;
+    }
+
+
+    make_current(id) {
+        $("#current_row")?.setAttribute("class", undefined);
+        const cr = this.rt.tBodies[0].rows[id].setAttribute("class", "current_row");
+    }
+}
+
 
 function main() {
 
-    let rr = new RR();
+    let rrt = new RRT();
 
     $("#autoComplete").addEventListener("keypress", function(event) {
         if (event.keyCode === KEY_ENTER) {
@@ -380,13 +526,13 @@ function main() {
             }
             let r_text = $("#autoComplete").value;
             $("#autoComplete").setAttribute("placeholder", r_text);
-            rr.push(r_text);
-        } 
+            rrt.push_rr(r_text);
+        }
     });
     register_listeners();
-    visual_log('initialised...');
+    visual_log('initialized...');
     set_user_info();
-
+    $("#info_infoblock").classList.add("hidden");
 }
 
 main()
